@@ -1,4 +1,4 @@
-// org.joinpeertube
+// xyz.gracjan.peertube
 
 // Helper function to parse the full channel URL (simplified manual parsing)
 function getChannelInfo(fullUrl) {
