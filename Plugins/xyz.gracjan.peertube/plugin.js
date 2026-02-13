@@ -1,6 +1,6 @@
 // xyz.gracjan.peertube
 
-// Helper function to parse the full channel URL (simplified manual parsing)
+// Helper function to parse the full channel URL
 function getChannelInfo(fullUrl) {
 	try {
 		let protocolEnd = fullUrl.indexOf("://");
@@ -8,7 +8,7 @@ function getChannelInfo(fullUrl) {
 
 		let hostAndPath = fullUrl.substring(protocolEnd + 3);
 		let firstSlashAfterHost = hostAndPath.indexOf('/');
-		
+
 		let parsedHost = "";
 		let path = "";
 
@@ -23,16 +23,21 @@ function getChannelInfo(fullUrl) {
 		if (!parsedHost) return null;
 
 		const instanceBaseUrl = fullUrl.substring(0, protocolEnd + 3 + parsedHost.length);
-		
+
 		// Clean path: remove leading/trailing slashes for consistent splitting
 		const cleanedPath = path.replace(/^\/+|\/+$/g, '');
+		if (!cleanedPath) return null;
+
 		const pathParts = cleanedPath.split('/');
 
-		if (pathParts.length === 2 && (pathParts[0] === 'c' || pathParts[0] === 'a')) {
-			const channelIdentifier = pathParts[1];
+		// Accept at least two parts (e.g. "c/techlore" or "c/techlore/videos")
+		if (pathParts.length >= 2 && (pathParts[0] === 'c' || pathParts[0] === 'a')) {
+			// Remove any query from the channel identifier
+			const channelIdentifier = pathParts[1].split(/[?#]/)[0];
 			if (channelIdentifier) {
-				// Return instanceBaseUrl, the channelIdentifier, and the parsedHost
-				return { instanceBaseUrl, channelIdentifier, host: parsedHost };
+				const channelPath = `${pathParts[0]}/${channelIdentifier}`;
+				const channelUrl = `${instanceBaseUrl}/${channelPath}`;
+				return { instanceBaseUrl, channelIdentifier, host: parsedHost, channelPath, channelUrl };
 			}
 		}
 	} catch (e) {

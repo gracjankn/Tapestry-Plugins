@@ -1,0 +1,17 @@
+{
+  "url": [
+	{
+	  "extract": "^(https?://[^/]+)/(c|accounts)/([^/]+)",
+	  "variable": "site"
+	}
+  ],
+  "html": [
+	{
+	  "element": "meta",
+	  "check": "property",
+	  "match": "og:platform",
+	  "content": "content",
+	  "contentMatch": "PeerTube"
+	}
+  ]
+}
