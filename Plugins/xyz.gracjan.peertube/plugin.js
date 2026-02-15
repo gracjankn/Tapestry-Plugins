@@ -46,13 +46,6 @@ function getChannelInfo(fullUrl) {
 	return null;
 }
 
-function identify() {
-	const info = getChannelInfo(site);
-	if (info) {
-		setIdentifier(info.channelIdentifier);
-	}
-}
-
 function load() {
 	const info = getChannelInfo(site);
 	if (!info || !info.host) { // Ensure info and info.host are available
