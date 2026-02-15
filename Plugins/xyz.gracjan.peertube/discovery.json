@@ -1,4 +1,10 @@
 {
+  "input": [
+	  {
+		  "match": "/^@?([a-zA-Z0-9_]+)@([a-zA-Z0-9._-]+\\.[a-zA-Z]{2,})$/",
+		  "url": "https://$2/c/$1"
+	  }
+  ],
   "url": [
 	{
 	  "extract": "^(https?://[^/]+)/(c|accounts)/([^/]+)",
