@@ -1,63 +1,9 @@
 // xyz.gracjan.peertube
 
-// Helper function to parse the full channel URL
-function getChannelInfo(fullUrl) {
-	try {
-		let protocolEnd = fullUrl.indexOf("://");
-		if (protocolEnd === -1) return null; // No protocol found
-
-		let hostAndPath = fullUrl.substring(protocolEnd + 3);
-		let firstSlashAfterHost = hostAndPath.indexOf('/');
-
-		let parsedHost = "";
-		let path = "";
-
-		if (firstSlashAfterHost === -1) {
-			parsedHost = hostAndPath; // URL is like https://example.com (no path)
-			path = "";
-		} else {
-			parsedHost = hostAndPath.substring(0, firstSlashAfterHost);
-			path = hostAndPath.substring(firstSlashAfterHost); // Path includes leading slash
-		}
-
-		if (!parsedHost) return null;
-
-		const instanceBaseUrl = fullUrl.substring(0, protocolEnd + 3 + parsedHost.length);
-
-		// Clean path: remove leading/trailing slashes for consistent splitting
-		const cleanedPath = path.replace(/^\/+|\/+$/g, '');
-		if (!cleanedPath) return null;
-
-		const pathParts = cleanedPath.split('/');
-
-		// Accept at least two parts (e.g. "c/techlore" or "c/techlore/videos")
-		if (pathParts.length >= 2 && (pathParts[0] === 'c' || pathParts[0] === 'a')) {
-			// Remove any query from the channel identifier
-			const channelIdentifier = pathParts[1].split(/[?#]/)[0];
-			if (channelIdentifier) {
-				const channelPath = `${pathParts[0]}/${channelIdentifier}`;
-				const channelUrl = `${instanceBaseUrl}/${channelPath}`;
-				return { instanceBaseUrl, channelIdentifier, host: parsedHost, channelPath, channelUrl };
-			}
-		}
-	} catch (e) {
-		// console.warn("Manual parsing error: " + fullUrl + ", Error: " + e.message);
-	}
-	return null;
-}
-
 function load() {
-	const info = getChannelInfo(site);
-	if (!info || !info.host) { // Ensure info and info.host are available
-		processError(new Error("Invalid PeerTube Channel URL format or could not parse host. Expected format: https://instance.com/c/channel_name"));
-		return;
-	}
-
-	// Construct fully qualified channel name for the API query
-	const fullyQualifiedChannelName = info.channelIdentifier + "@" + info.host;
 	
 	// Use the more specific endpoint for fetching videos for a channel
-	sendRequest(info.instanceBaseUrl + "/api/v1/video-channels/" + fullyQualifiedChannelName + "/videos?perPage=20&page=1&sort=-publishedAt")
+	sendRequest(instanceBaseUrl + "/api/v1/video-channels/" + channelIdentifier + "/videos?perPage=20&page=1&sort=-publishedAt")
 	.then((text) => {
 		const jsonObject = JSON.parse(text);
 		
@@ -80,7 +26,7 @@ function load() {
 			item.body = content;
 			
 			// Add preview image as an attachment using MediaAttachment API
-			const previewImageUrl = info.instanceBaseUrl + video.previewPath;
+			const previewImageUrl = instanceBaseUrl + video.previewPath;
 			const attachment = MediaAttachment.createWithUrl(previewImageUrl);
 			attachment.text = video.name; // Use video title for accessibility description
 			item.attachments = [attachment];
@@ -102,13 +48,8 @@ function load() {
 }
 
 function verify() {
-	const info = getChannelInfo(site);
-	if (!info) {
-		processError(new Error("Invalid PeerTube Channel URL format. Expected format: https://instance.com/c/channel_name"));
-		return;
-	}
 
-	sendRequest(info.instanceBaseUrl + "/api/v1/video-channels/" + info.channelIdentifier)
+	sendRequest(instanceBaseUrl + "/api/v1/video-channels/" + channelIdentifier)
 	.then((text) => {
 		const jsonObject = JSON.parse(text);
 		const channel = jsonObject;
@@ -116,7 +57,7 @@ function verify() {
 		const verification = {
 			displayName: channel.displayName,
 			icon: "https://" + channel.host + channel.avatars[1].path,
-			baseUrl: info.instanceBaseUrl // Set baseUrl to the parsed instance base
+			baseUrl: instanceBaseUrl // Set baseUrl to the parsed instance base
 		};
 		
 		processVerification(verification);

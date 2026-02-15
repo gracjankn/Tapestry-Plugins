@@ -8,7 +8,7 @@
   "url": [
 	{
 	  "extract": "^(https?://[^/]+)/(c|accounts)/([^/]+)",
-	  "variable": "site"
+	  "variable": "site, instanceBaseUrl, channelIdentifier"
 	}
   ],
   "html": [
