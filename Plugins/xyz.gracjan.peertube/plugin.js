@@ -3,7 +3,7 @@
 function load() {
 	
 	// Use the more specific endpoint for fetching videos for a channel
-	sendRequest(instanceBaseUrl + "/api/v1/video-channels/" + channelIdentifier + "/videos?perPage=20&page=1&sort=-publishedAt")
+	sendRequest(site + "/api/v1/video-channels/" + channelIdentifier + "/videos?perPage=20&page=1&sort=-publishedAt")
 	.then((text) => {
 		const jsonObject = JSON.parse(text);
 		
@@ -26,7 +26,7 @@ function load() {
 			item.body = content;
 			
 			// Add preview image as an attachment using MediaAttachment API
-			const previewImageUrl = instanceBaseUrl + video.previewPath;
+			const previewImageUrl = site + video.previewPath;
 			const attachment = MediaAttachment.createWithUrl(previewImageUrl);
 			attachment.text = video.name; // Use video title for accessibility description
 			item.attachments = [attachment];
@@ -49,7 +49,7 @@ function load() {
 
 function verify() {
 
-	sendRequest(instanceBaseUrl + "/api/v1/video-channels/" + channelIdentifier)
+	sendRequest(site + "/api/v1/video-channels/" + channelIdentifier)
 	.then((text) => {
 		const jsonObject = JSON.parse(text);
 		const channel = jsonObject;
@@ -57,7 +57,7 @@ function verify() {
 		const verification = {
 			displayName: channel.displayName,
 			icon: "https://" + channel.host + channel.avatars[1].path,
-			baseUrl: instanceBaseUrl // Set baseUrl to the parsed instance base
+			baseUrl: site
 		};
 		
 		processVerification(verification);

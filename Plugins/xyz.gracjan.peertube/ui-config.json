@@ -1,0 +1,10 @@
+{
+	"inputs": [
+		{
+			"name": "channelIdentifier",
+			"type": "text",
+			"prompt": "Channel",
+			"placeholder": "Techlore"
+		}
+	]
+}

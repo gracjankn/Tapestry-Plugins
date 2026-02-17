@@ -3,11 +3,12 @@
 	"display_name": "PeerTube",
 	"icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Logo_de_PeerTube.svg/500px-Logo_de_PeerTube.svg.png",
 	"needsVerification": true,
+	"verify_variables": true,
 	"provides_attachments": true,
 	"service_name": "PeerTube",
 	"default_color": "orange",
 	"version": 4,
-	"site_prompt": "Channel",
-	"site_placeholder": "https://techlore.tv/c/techlore",
-	"site_help": "Enter the URL for the PeerTube channel you want to follow."
+	"site_prompt": "Instance",
+	"site_placeholder": "https://techlore.tv",
+	"site_help": "Enter the PeerTube instance/server for the channel you want to watch."
 }
